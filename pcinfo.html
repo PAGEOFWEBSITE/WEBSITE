@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Info</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fa;
+            padding: 20px;
+            margin: 0;
+        }
+        .pc-info-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .pc-info-container h1 {
+            text-align: center;
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        .pc-info-container p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .pc-info-container .info-item strong {
+            color: #333;
+        }
+        .license {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+        }
+        .license a {
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="pc-info-container">
+        <h1>PC Information</h1>
+        <p><strong>CPU:</strong> <span id="cpu">Detecting...</span></p>
+        <p><strong>GPU:</strong> <span id="gpu">Detecting...</span></p>
+        <p><strong>System:</strong> <span id="system">Detecting...</span></p>
+        <p><strong>Country:</strong> <span id="country">Detecting...</span></p>
+        <div class="license">
+            <p>&copy; 2024 YourName. All rights reserved.</p>
+            <p>Licensed under MIT License. See <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a>.</p>
+        </div>
+    </div>
+
+    <script>
+        // Detect system (CPU architecture)
+        const cpuArchitecture = navigator.cpuClass || "Unknown CPU architecture";
+        document.getElementById("cpu").textContent = cpuArchitecture;
+
+        // Detect GPU info using WebGL (only basic GPU details)
+        function getGPUInfo() {
+            const canvas = document.createElement("canvas");
+            const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            if (!gl) {
+                return "GPU not detected";
+            }
+            const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+            const gpu = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "GPU info not available";
+            return gpu;
+        }
+        document.getElementById("gpu").textContent = getGPUInfo();
+
+        // Fetch country info and update the page
+        fetch('https://ip-api.com/json/')
+            .then(response => response.json())
+            .then(data => {
+                const country = data.country;
+                document.getElementById("country").textContent = country;
+            })
+            .catch(error => console.log('Error detecting country:', error));
+
+        // Detect system info (basic user agent)
+        const systemInfo = navigator.platform || "Unknown System";
+        document.getElementById("system").textContent = systemInfo;
+    </script>
+</body>
+</html>
